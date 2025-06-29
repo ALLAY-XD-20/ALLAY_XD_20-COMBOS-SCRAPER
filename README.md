@@ -36,3 +36,4 @@ A powerful multi-site combo scraper written in Python. Automatically extracts an
    ```bash
    git clone https://github.com/yourusername/botbix-cloud-scraper.git
    cd botbix-cloud-scraper
+   pip install requests beautifulsoup4 colorama pathvalidate
