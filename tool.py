@@ -259,13 +259,13 @@ class leech():
         except: pass
 
 def title():
-    utils.set_title(f"Combo Scraper by KillinMachine | Combos: {scraped}  -  Pages: {pages-1}")
+    utils.set_title(f"Combo Scraper by ALLAY_XD_20 | Combos: {scraped}  -  Pages: {pages-1}")
     time.sleep(1)
     threading.Thread(target=title).start()
 
 def start():
     global pages
-    utils.set_title(f"Combo Scraper by KillinMachine")
+    utils.set_title(f"Combo Scraper by ALLAY_XD_20")
     pages = int(input(Fore.LIGHTGREEN_EX+"Pages to Scrape: "))+1
     if not os.path.exists("combos"): os.makedirs("combos/")
     title()
