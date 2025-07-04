@@ -1,4 +1,4 @@
-# 🛠 BotBix Cloud Combo Scraper
+# 🛠 Botnix Cloud Combo Scraper
 
 A powerful multi-site combo scraper written in Python. Automatically extracts and saves combo lists from popular cracking and leak forums.
 
@@ -15,7 +15,7 @@ A powerful multi-site combo scraper written in Python. Automatically extracts an
   - leaks.ro
   - and more...
 - Auto-formats and filters combos
-- Saves output in `combos/botbix-cloud-N.txt`
+- Saves output in `combos/botnix-cloud-N.txt`
 - Multi-threaded scraping
 - Supports file hosts: Mega.nz, MediaFire, Gofile, Sendspace, etc.
 - Works in Termux, Windows CMD, and Linux terminals
