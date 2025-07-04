@@ -16,7 +16,7 @@ def get_next_output_file():
     index = 1
     while os.path.exists(f"combos/botbix-cloud-{index}.txt"):
         index += 1
-    return f"combos/botbix-cloud-{index}.txt"
+    return f"combos/botnix-cloud-{index}.txt"
 
 output_file = get_next_output_file()
 
