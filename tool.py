@@ -14,9 +14,9 @@ scraped = 0
 # Auto-increment output file in combos folder
 def get_next_output_file():
     index = 1
-    while os.path.exists(f"combos/botbix-cloud-{index}.txt"):
+    while os.path.exists(f"combos/kyrahost-{index}.txt"):
         index += 1
-    return f"combos/botnix-cloud-{index}.txt"
+    return f"combos/kyrahost-{index}.txt"
 
 output_file = get_next_output_file()
 
