@@ -34,6 +34,6 @@ A powerful multi-site combo scraper written in Python. Automatically extracts an
 
 1. **Clone the repo**
    ```bash
-   git clone https://github.com/yourusername/botbix-cloud-scraper.git
-   cd botbix-cloud-scraper
+   git clone https://github.com/ALLAY-XD-20/ALLAY_XD_20-COMBOS-SCRAPER.git
+   cd ALLAY_XD_20-COMBOS-SCRAPER
    pip install requests beautifulsoup4 colorama pathvalidate
