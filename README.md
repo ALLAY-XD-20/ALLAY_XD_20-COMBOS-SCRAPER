@@ -10,8 +10,6 @@ A powerful multi-site combo scraper written in Python. Automatically extracts an
   - heypass.net
   - nohide.space
   - crackingx.com
-  - nulled.to
-  - hellofhackers.com
   - leaks.ro
   - and more...
 - Auto-formats and filters combos
