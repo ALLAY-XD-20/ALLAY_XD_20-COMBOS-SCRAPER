@@ -125,73 +125,73 @@ class leech():
             else: print(Fore.RED+"Could not get posts from nohide.space [Possible CloudFlare Blocking]")
         except Exception as e: print(e)
     def cracking_org():
-    try:
-        # --- YOU NEED TO CONFIGURE THESE ---
-        base_list_url = "https://cracking.org/threads/" # Base URL for the list page
-        total_pages_to_scrape = 5 # How many pages you want to go through
-        # ---
+        try:
+            # --- YOU NEED TO CONFIGURE THESE ---
+            base_list_url = "https://cracking.org/threads/" # Base URL for the list page
+            total_pages_to_scrape = 5 # How many pages you want to go through
+            # ---
 
-        for page in range(1, total_pages_to_scrape + 1):
-            # Construct the URL for each page - you MUST check the actual pagination format on the site
-            # Common formats: f"{base_list_url}page/{page}/" or f"{base_list_url}?page={page}"
-            # START EDITING HERE: Replace the line below with the correct format
-            list_page_url = f"{base_list_url}page/{page}/" # <--- LIKELY NEEDS CORRECTION
-            # STOP EDITING HERE
+            for page in range(1, total_pages_to_scrape + 1):
+                # Construct the URL for each page - you MUST check the actual pagination format on the site
+                # Common formats: f"{base_list_url}page/{page}/" or f"{base_list_url}?page={page}"
+                # START EDITING HERE: Replace the line below with the correct format
+                list_page_url = f"{base_list_url}page/{page}/" # <--- LIKELY NEEDS CORRECTION
+                # STOP EDITING HERE
 
-            req = requests.get(list_page_url, headers=agent)
-            if req.status_code != 200:
-                print(f"Failed to get page {page}, status code: {req.status_code}")
-                continue
+                req = requests.get(list_page_url, headers=agent)
+                if req.status_code != 200:
+                    print(f"Failed to get page {page}, status code: {req.status_code}")
+                    continue
 
-            soup = BeautifulSoup(req.text, 'html.parser')
+                soup = BeautifulSoup(req.text, 'html.parser')
 
-            # --- FIND ALL POST CONTAINERS ON THE LIST PAGE ---
-            # START EDITING HERE: Find the correct selector for the element that holds the link to a single thread
-            # Example: li_elements = soup.find_all('li', class_='thread-row-class')
-            post_containers = soup.find_all('li', class_='ipsType_light') # <--- LIKELY NEEDS CORRECTION
-            # STOP EDITING HERE
+                # --- FIND ALL POST CONTAINERS ON THE LIST PAGE ---
+                # START EDITING HERE: Find the correct selector for the element that holds the link to a single thread
+                # Example: li_elements = soup.find_all('li', class_='thread-row-class')
+                post_containers = soup.find_all('li', class_='ipsType_light') # <--- LIKELY NEEDS CORRECTION
+                # STOP EDITING HERE
 
-            hrefs = []
-            for container in post_containers:
-                link_tag = container.find('a')
-                if link_tag and link_tag.get('href'):
-                    href = link_tag['href']
-                    # Make sure the URL is absolute
-                    if href.startswith('/'):
-                        href = 'https://cracking.org' + href
-                    hrefs.append(href)
+                hrefs = []
+                for container in post_containers:
+                    link_tag = container.find('a')
+                    if link_tag and link_tag.get('href'):
+                        href = link_tag['href']
+                        # Make sure the URL is absolute
+                        if href.startswith('/'):
+                            href = 'https://cracking.org' + href
+                        hrefs.append(href)
 
-            print(f"Found [{len(hrefs)}] posts on page {page} of cracking.org")
+                print(f"Found [{len(hrefs)}] posts on page {page} of cracking.org")
 
-            for href in hrefs:
-                if '/threads/' in href: # Check if it's a thread link - adjust as needed
-                    try:
-                        post_page_req = requests.get(href, headers=agent)
-                        post_soup = BeautifulSoup(post_page_req.text, 'html.parser')
+                for href in hrefs:
+                    if '/threads/' in href: # Check if it's a thread link - adjust as needed
+                        try:
+                            post_page_req = requests.get(href, headers=agent)
+                            post_soup = BeautifulSoup(post_page_req.text, 'html.parser')
 
-                        # --- FIND THE CONTENT CONTAINER WITH THE TARGET LINK ---
-                        # START EDITING HERE: Find the div that holds the post content/message
-                        # Example: content_div = post_soup.find('div', class_='message-content')
-                        content_div = post_soup.find('div', class_='ipsType_normal ipsType_richText ipsPadding_bottom ipsContained') # <--- LIKELY NEEDS CORRECTION
-                        # STOP EDITING HERE
+                            # --- FIND THE CONTENT CONTAINER WITH THE TARGET LINK ---
+                            # START EDITING HERE: Find the div that holds the post content/message
+                            # Example: content_div = post_soup.find('div', class_='message-content')
+                            content_div = post_soup.find('div', class_='ipsType_normal ipsType_richText ipsPadding_bottom ipsContained') # <--- LIKELY NEEDS CORRECTION
+                            # STOP EDITING HERE
 
-                        if content_div:
-                            target_link = content_div.find('a')
-                            if target_link and target_link.get('href'):
-                                leech.handle(target_link['href'], href)
+                            if content_div:
+                                target_link = content_div.find('a')
+                                if target_link and target_link.get('href'):
+                                    leech.handle(target_link['href'], href)
+                                else:
+                                    print(f"No link found in post: {href}")
                             else:
-                                print(f"No link found in post: {href}")
-                        else:
-                            print(f"Could not find content div in post: {href}")
+                                print(f"Could not find content div in post: {href}")
 
-                    except Exception as post_error:
-                        print(f"Error processing post {href}: {post_error}")
-                else:
-                    print(f"Skipping non-thread link: {href}")
+                        except Exception as post_error:
+                            print(f"Error processing post {href}: {post_error}")
+                    else:
+                        print(f"Skipping non-thread link: {href}")
 
-    except Exception as e:
-        print(f"An unexpected error occurred in cracking_org: {e}")
-        # Optionally, you might want to add more specific error handling here
+        except Exception as e:
+            print(f"An unexpected error occurred in cracking_org: {e}")
+            # Optionally, you might want to add more specific error handling here
     def nulled():
         dupe = []
         try:
@@ -337,7 +337,7 @@ def start():
     pages = int(input(Fore.LIGHTGREEN_EX+"Pages to Scrape: "))+1
     if not os.path.exists("combos"): os.makedirs("combos/")
     title()
-    functions = [leech.crackingx, leech.cracking_org, leech.pastefo, leech.crackingpro] # leech.combolist
+    functions = [leech.crackingx, leech.crackingpro] # leech.combolist
     #functions = [leech.combolist] THIS IS KEPT OUT BECAUSE I THINK THAT SITE IS UPLOADING FAKE LISTS!
     threads = []
     for func in functions:
