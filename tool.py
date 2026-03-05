@@ -337,7 +337,7 @@ def start():
     pages = int(input(Fore.LIGHTGREEN_EX+"Pages to Scrape: "))+1
     if not os.path.exists("combos"): os.makedirs("combos/")
     title()
-    functions = [leech.crackingx, leech.leaksro, leech.pastefo, leech.crackingpro] # leech.combolist
+    functions = [leech.crackingx, leech.cracking_org, leech.pastefo, leech.crackingpro] # leech.combolist
     #functions = [leech.combolist] THIS IS KEPT OUT BECAUSE I THINK THAT SITE IS UPLOADING FAKE LISTS!
     threads = []
     for func in functions:
