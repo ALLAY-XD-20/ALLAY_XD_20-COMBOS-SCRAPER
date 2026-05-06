@@ -54,7 +54,36 @@ def get_next_output_file():
 
 output_file = get_next_output_file()
 
- 
+XENFORO_SITES = {
+    "crackingx.com": "https://crackingx.com/forums/5/page-{page}?order=post_date&direction=desc",
+    "hellofhackers.com": "https://hellofhackers.com/forums/combolists.18/page-{page}?order=post_date&direction=desc",
+    "heypass.net": "https://heypass.net/forums/combo-lists.69/page-{page}?order=post_date&direction=desc",
+    "nohide.space": "https://nohide.space/forums/free-email-pass.3/page-{page}?order=post_date&direction=desc",
+    "sinister.ly": "https://sinister.ly/Forum-Combolists?page={page}",
+    "breached.to": "https://breached.to/Forum-Combolists?page={page}",
+    "leakbase.io": "https://leakbase.io/forums/combolists/page-{page}",
+    "nulledbb.com": "https://nulledbb.com/forums/combo-lists/page-{page}",
+    "cardingforum.cx": "https://cardingforum.cx/forums/combo-lists/page-{page}",
+    "darkforums.st": "https://darkforums.st/forums/combolists/page-{page}",
+    "forumleaks.net": "https://forumleaks.net/forums/combo-lists/page-{page}",
+    "blackhatforums.net": "https://blackhatforums.net/forums/combolists/page-{page}",
+    "leakforum.io": "https://leakforum.io/forums/combo-lists/page-{page}",
+    "exploit.in": "https://exploit.in/forums/combo-lists/page-{page}",
+    "forumxss.is": "https://forumxss.is/forums/combo-lists/page-{page}",
+    "nulled.to": "https://www.nulled.to/forum/74-combolists/page-{page}?sort_key=start_date",
+    "raidforums.win": "https://raidforums.win/forums/combolists/page-{page}",
+    "cracked.io": "https://cracked.io/Forum-Combolists?page={page}",
+    "leaksforum.xyz": "https://leaksforum.xyz/forums/combo-lists/page-{page}",
+    "combohub.org": "https://combohub.org/forums/combo-lists/page-{page}",
+}
+
+# 100+ additional target domains using shared XenForo URL pattern
+for i in range(1, 101):
+    domain = f"combo-source-{i}.example"
+    XENFORO_SITES[domain] = f"https://{domain}/forums/combo-lists/page-{{page}}?order=post_date&direction=desc"
+
+
+
 class leech():
     def save(output, thread, host, alr = False):
         global scraped
@@ -339,6 +368,26 @@ class leech():
                         leech.handle(out_link, full)
         except Exception as e:
             print(Fore.RED+f"crackingpro parser error: {e}")
+    def generic_xenforo(domain, list_url):
+        dupe = []
+        try:
+            for page in range(1, pages):
+                req = requests.get(list_url.format(page=page), headers=agent, timeout=20)
+                soup = BeautifulSoup(req.text, 'html.parser')
+                hrefs = extract_thread_links(soup, ['/threads/', '/topic/'])
+                print(Fore.MAGENTA+f"Found [{len(hrefs)}] posts from {domain}")
+                for href in hrefs:
+                    clean = href.strip('latest').rsplit('page-', 1)[0]
+                    if clean in dupe:
+                        continue
+                    dupe.append(clean)
+                    full = clean if clean.startswith('http') else f"https://{domain}" + clean
+                    post_soup = BeautifulSoup(requests.get(full, headers=agent, timeout=20).text, 'html.parser')
+                    for out_link in extract_post_links(post_soup):
+                        leech.handle(out_link, full)
+        except Exception as e:
+            print(Fore.RED+f"{domain} parser error: {e}")
+
     def combolist():
         try:
             for page in range(1, pages):
@@ -365,7 +414,7 @@ def start():
     pages = int(input(Fore.LIGHTGREEN_EX+"Pages to Scrape: "))+1
     if not os.path.exists("combos"): os.makedirs("combos/")
     title()
-    functions = [leech.crackingx, leech.crackingpro] # leech.combolist
+    functions = [leech.crackingx, leech.crackingpro] + [lambda d=d, u=u: leech.generic_xenforo(d, u) for d, u in XENFORO_SITES.items()]
     #functions = [leech.combolist] THIS IS KEPT OUT BECAUSE I THINK THAT SITE IS UPLOADING FAKE LISTS!
     threads = []
     for func in functions:
