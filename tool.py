@@ -11,6 +11,40 @@ agent = {'User-Agent':'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537
 pages = 0
 scraped = 0
 
+
+def extract_thread_links(soup, prefixes):
+    links = []
+    seen = set()
+    for a in soup.select('a[href]'):
+        href = a.get('href')
+        if not href:
+            continue
+        for prefix in prefixes:
+            if prefix in href and href not in seen:
+                seen.add(href)
+                links.append(href)
+                break
+    return links
+
+
+def extract_post_links(soup):
+    selectors = [
+        'div.bbWrapper a[href]',
+        'article.message-body a[href]',
+        'div.message-content a[href]',
+        'div.ipsType_richText a[href]',
+        'div.cPost_contentWrap a[href]'
+    ]
+    links = []
+    seen = set()
+    for selector in selectors:
+        for a in soup.select(selector):
+            href = a.get('href')
+            if href and href not in seen:
+                seen.add(href)
+                links.append(href)
+    return links
+
 # Auto-increment output file in combos folder
 def get_next_output_file():
     index = 1
@@ -245,23 +279,18 @@ class leech():
             for page in range(1, pages):
                 req = requests.get(f"https://crackingx.com/forums/5/page-{page}?order=post_date&direction=desc", headers=agent)
                 soup = BeautifulSoup(req.text, 'html.parser')
-                target_div = soup.find('div', class_='structItemContainer-group js-threadList')
-                if target_div:
-                    links = target_div.find_all('a')
-                    print(Fore.MAGENTA+f"Found [{len(links)}] posts from crackingx.com")
-                    for link in links:
-                        href = link.get('href')
-                        if href and "/threads/" in href:
-                            href = href.strip('latest').rsplit('page-', 1)[0]
-                            if href not in dupe:
-                                dupe.append(href)
-                                s = BeautifulSoup(requests.get("https://crackingx.com"+href, headers=agent).text, 'html.parser')
-                                for ele in s.find_all('div', class_='bbWrapper'):
-                                    link_el = ele.find_all('a', href=True)
-                                    for url in link_el:
-                                        leech.handle(url.get('href'), "https://crackingx.com"+href)
-                else: print(Fore.RED+"Could not get posts from crackingx.com")
-        except: pass
+                hrefs = extract_thread_links(soup, ["/threads/"])
+                print(Fore.MAGENTA+f"Found [{len(hrefs)}] posts from crackingx.com")
+                for href in hrefs:
+                    href = href.strip('latest').rsplit('page-', 1)[0]
+                    if href not in dupe:
+                        dupe.append(href)
+                        full = href if href.startswith('http') else "https://crackingx.com"+href
+                        s = BeautifulSoup(requests.get(full, headers=agent).text, 'html.parser')
+                        for out_link in extract_post_links(s):
+                            leech.handle(out_link, full)
+        except Exception as e:
+            print(Fore.RED+f"crackingx parser error: {e}")
     def leaksro():
         dupe = []
         try:
@@ -301,16 +330,15 @@ class leech():
             for page in range(1, pages):
                 req = requests.get(f"https://www.crackingpro.com/forum/23-combos/page/{page}/", headers=agent)
                 soup = BeautifulSoup(req.text, 'html.parser')
-                li_elements = soup.find_all('li', class_='ipsType_light')
-                hrefs = [li.find('a')['href'] for li in li_elements if li.find('a')]
+                hrefs = extract_thread_links(soup, ['/topic/', '/threads/'])
                 print(Fore.MAGENTA+f"Found [{len(hrefs)}] posts from crackingpro.com")
                 for href in hrefs:
-                    if '/topic/' in href:
-                        soup = BeautifulSoup(requests.get(href, headers=agent).text, 'html.parser')
-                        div_element = soup.find('div', class_='ipsType_normal ipsType_richText ipsPadding_bottom ipsContained')
-                        leech.handle(div_element.find('a')['href'], href)
-                else: print(Fore.RED+"Could not get posts from crackingpro.com")
-        except: pass
+                    full = href if href.startswith('http') else "https://www.crackingpro.com"+href
+                    post_soup = BeautifulSoup(requests.get(full, headers=agent).text, 'html.parser')
+                    for out_link in extract_post_links(post_soup):
+                        leech.handle(out_link, full)
+        except Exception as e:
+            print(Fore.RED+f"crackingpro parser error: {e}")
     def combolist():
         try:
             for page in range(1, pages):
